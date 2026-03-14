@@ -794,12 +794,41 @@ document.getElementById('edit-modal').addEventListener('click', e => {
 //  PAGE: MASTER MEMBER (ADMIN ONLY)
 // ════════════════════════════════════════
 let msearch='';
-window.setMsearch = function(v){ msearch=v; renderMaster(); };
+function getMasterList() {
+  return S.members.filter(m=>m.name.toLowerCase().includes(msearch.toLowerCase()))
+                  .slice().sort((a,b)=>a.name.localeCompare(b.name));
+}
+function renderMasterList() {
+  // Hanya update bagian list — input pencarian TIDAK disentuh agar fokus tidak hilang
+  const container = document.getElementById('master-list-wrap');
+  const counter   = document.getElementById('master-count');
+  if (!container) return;
+  const list = getMasterList();
+  if (counter) counter.textContent = S.members.length;
+  container.innerHTML = list.length===0
+    ? `<div class="empty"><div class="empty-ico">🪖</div><div class="empty-txt">Belum ada member${msearch?' cocok':''}</div></div>`
+    : `<div class="mlist">${list.map((m,i)=>`
+        <div class="mrow">
+          <span class="mnum">${i+1}</span>
+          <span class="mname">${esc(m.name)}</span>
+          <span class="rbadge r-${m.rank.toLowerCase()}">${m.rank}</span>
+          <select class="finput" style="width:68px;padding:4px 8px;font-size:12px" onchange="changeRank('${m.id}',this.value)">
+            <option ${m.rank==='R2'?'selected':''}>R2</option>
+            <option ${m.rank==='R3'?'selected':''}>R3</option>
+          </select>
+          <button class="btn btn-blue btn-sm" onclick="openEdit('${m.id}')">✏️</button>
+          <button class="btn btn-red btn-sm" onclick="delMember('${m.id}')">✕</button>
+        </div>`).join('')}
+      </div>`;
+}
+window.setMsearch = function(v){ msearch=v; renderMasterList(); };
 function renderMaster() {
   if (!S.isAdmin) return;
   const page = document.getElementById('page-master');
-  const list = S.members.filter(m=>m.name.toLowerCase().includes(msearch.toLowerCase()))
-                         .slice().sort((a,b)=>a.name.localeCompare(b.name));
+  // Jika struktur sudah ada, cukup update list saja tanpa rebuild seluruh HTML
+  if (document.getElementById('master-list-wrap')) {
+    renderMasterList(); return;
+  }
   page.innerHTML = `
     <div class="card">
       <div class="card-hd"><div class="card-title">➕ Tambah Member</div></div>
@@ -819,27 +848,14 @@ function renderMaster() {
 
     <div class="card">
       <div class="card-hd">
-        <div class="card-title">👥 Daftar Member <span style="color:var(--muted);font-size:13px;font-weight:400">(${S.members.length})</span></div>
+        <div class="card-title">👥 Daftar Member <span id="master-count" style="color:var(--muted);font-size:13px;font-weight:400">(${S.members.length})</span></div>
         <button class="btn btn-ghost btn-sm" onclick="showImport()">⬆ Import</button>
       </div>
       <div class="sbar"><span class="sicon">🔍</span>
-        <input class="finput" style="padding-left:36px" placeholder="Cari nama..." value="${esc(msearch)}" oninput="setMsearch(this.value)">
+        <input class="finput" id="master-search" style="padding-left:36px" placeholder="Cari nama..."
+          oninput="setMsearch(this.value)" autocomplete="off">
       </div>
-      ${list.length===0?`<div class="empty"><div class="empty-ico">🪖</div><div class="empty-txt">Belum ada member${msearch?' cocok':''}</div></div>`:`
-      <div class="mlist">
-        ${list.map((m,i)=>`
-          <div class="mrow">
-            <span class="mnum">${i+1}</span>
-            <span class="mname">${esc(m.name)}</span>
-            <span class="rbadge r-${m.rank.toLowerCase()}">${m.rank}</span>
-            <select class="finput" style="width:68px;padding:4px 8px;font-size:12px" onchange="changeRank('${m.id}',this.value)">
-              <option ${m.rank==='R2'?'selected':''}>R2</option>
-              <option ${m.rank==='R3'?'selected':''}>R3</option>
-            </select>
-            <button class="btn btn-blue btn-sm" onclick="openEdit('${m.id}')">✏️</button>
-            <button class="btn btn-red btn-sm" onclick="delMember('${m.id}')">✕</button>
-          </div>`).join('')}
-      </div>`}
+      <div id="master-list-wrap"></div>
     </div>
 
     <!-- Import Modal -->
@@ -855,6 +871,7 @@ function renderMaster() {
       </div>
     </div>
   `;
+  renderMasterList();
 }
 window.showImport = () => { const m=document.getElementById('imp-modal'); if(m) m.style.display='flex'; };
 window.hideImport = () => { const m=document.getElementById('imp-modal'); if(m) m.style.display='none'; };
