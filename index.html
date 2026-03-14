@@ -1,0 +1,1060 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Last War — Rekap Promote & Demote | ILC #228</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:      #080a0f;
+  --bg2:     #0e1118;
+  --bg3:     #141921;
+  --surface: #1a2030;
+  --surface2:#202840;
+  --border:  rgba(255,255,255,0.07);
+  --border2: rgba(255,255,255,0.14);
+  --gold:    #f0a732;
+  --gold2:   #ffd166;
+  --golddim: rgba(240,167,50,0.18);
+  --red:     #e84545;
+  --red2:    #ff6b6b;
+  --green:   #2ecc71;
+  --green2:  #4fffab;
+  --blue:    #3b82f6;
+  --blue2:   #60a5fa;
+  --muted:   rgba(255,255,255,0.38);
+  --text:    rgba(255,255,255,0.90);
+  --r2:      #94a3b8;
+  --r3:      #f0a732;
+  --font-h:  'Rajdhani', sans-serif;
+  --font-b:  'Outfit', sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:var(--font-b);
+  min-height:100vh;
+  overflow-x:hidden;
+}
+
+/* ── grid bg ── */
+body::before{
+  content:'';
+  position:fixed;inset:0;
+  background-image:
+    linear-gradient(rgba(240,167,50,0.025) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(240,167,50,0.025) 1px,transparent 1px);
+  background-size:48px 48px;
+  pointer-events:none;z-index:0;
+}
+
+/* glow orb top */
+body::after{
+  content:'';
+  position:fixed;
+  top:-160px;left:50%;transform:translateX(-50%);
+  width:700px;height:320px;
+  background:radial-gradient(ellipse,rgba(240,167,50,0.07) 0%,transparent 70%);
+  pointer-events:none;z-index:0;
+}
+
+.wrap{position:relative;z-index:1;max-width:920px;margin:0 auto;padding:0 16px 60px}
+
+/* ══════════ HEADER ══════════ */
+.header{
+  padding:30px 0 22px;
+  border-bottom:1px solid var(--border);
+  margin-bottom:26px;
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  flex-wrap:wrap;
+}
+.hbrand{display:flex;align-items:center;gap:14px}
+.hicon{
+  width:48px;height:48px;
+  background:linear-gradient(135deg,#f0a732,#c45f00);
+  border-radius:12px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:24px;flex-shrink:0;
+  box-shadow:0 4px 20px rgba(240,167,50,0.3);
+}
+.htitle{
+  font-family:var(--font-h);
+  font-size:24px;font-weight:700;
+  letter-spacing:1px;color:var(--gold2);line-height:1.1;
+}
+.hsub{font-size:11px;color:var(--muted);margin-top:3px;letter-spacing:.4px}
+.hright{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.week-pill{
+  background:var(--surface);border:1px solid var(--border2);
+  border-radius:8px;padding:7px 14px;
+  font-family:var(--font-h);font-size:13px;font-weight:600;
+  color:var(--gold);letter-spacing:.5px;
+}
+.admin-pill{
+  display:flex;align-items:center;gap:7px;
+  background:rgba(240,167,50,0.1);
+  border:1px solid rgba(240,167,50,0.3);
+  border-radius:8px;padding:6px 12px;
+  font-size:12px;font-weight:600;color:var(--gold2);cursor:pointer;
+  transition:all .2s;
+}
+.admin-pill:hover{background:rgba(240,167,50,0.18)}
+.admin-dot{width:7px;height:7px;border-radius:50%;background:var(--green2);box-shadow:0 0 6px var(--green2)}
+.admin-dot.off{background:var(--muted);box-shadow:none}
+
+/* ══════════ NAV ══════════ */
+.nav{
+  display:flex;gap:4px;
+  background:var(--bg2);border:1px solid var(--border);
+  border-radius:12px;padding:4px;margin-bottom:24px;
+}
+.nav-btn{
+  flex:1;padding:10px 6px;
+  background:transparent;border:none;border-radius:8px;
+  color:var(--muted);font-family:var(--font-b);font-size:13px;font-weight:500;
+  cursor:pointer;transition:all .2s;
+  display:flex;align-items:center;justify-content:center;gap:6px;
+}
+.nav-btn:hover{color:var(--text);background:var(--surface)}
+.nav-btn.active{background:var(--surface2);color:var(--gold2);border:1px solid rgba(240,167,50,0.28)}
+.nbadge{
+  background:rgba(240,167,50,0.18);color:var(--gold);
+  font-size:10px;font-weight:700;padding:1px 6px;border-radius:20px;min-width:20px;text-align:center;
+}
+/* lock icon on admin-only tabs */
+.tab-lock{font-size:11px;opacity:.5}
+
+/* ══════════ CARD ══════════ */
+.card{
+  background:var(--bg2);border:1px solid var(--border);
+  border-radius:14px;padding:20px;margin-bottom:16px;
+}
+.card-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.card-title{
+  font-family:var(--font-h);font-size:16px;font-weight:700;
+  letter-spacing:.5px;color:var(--gold2);
+  display:flex;align-items:center;gap:8px;
+}
+
+/* ══════════ BUTTONS ══════════ */
+.btn{
+  padding:8px 18px;border-radius:8px;border:none;
+  font-family:var(--font-b);font-size:13px;font-weight:600;
+  cursor:pointer;transition:all .2s;
+  display:inline-flex;align-items:center;gap:6px;
+}
+.btn-gold{background:linear-gradient(135deg,#f0a732,#d4860e);color:#180e00}
+.btn-gold:hover{filter:brightness(1.1);transform:translateY(-1px)}
+.btn-red{background:rgba(232,69,69,0.14);color:var(--red2);border:1px solid rgba(232,69,69,0.28)}
+.btn-red:hover{background:rgba(232,69,69,0.24)}
+.btn-blue{background:rgba(59,130,246,0.12);color:var(--blue2);border:1px solid rgba(59,130,246,0.28)}
+.btn-blue:hover{background:rgba(59,130,246,0.22)}
+.btn-ghost{background:var(--surface);color:var(--muted);border:1px solid var(--border)}
+.btn-ghost:hover{color:var(--text);border-color:var(--border2)}
+.btn-sm{padding:5px 12px;font-size:12px}
+.btn:disabled{opacity:.4;cursor:not-allowed;transform:none!important;filter:none!important}
+
+/* ══════════ FORM ══════════ */
+.field{margin-bottom:14px}
+.flabel{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px;display:block}
+.finput{
+  width:100%;background:var(--surface);border:1px solid var(--border);
+  border-radius:8px;padding:10px 14px;
+  color:var(--text);font-family:var(--font-b);font-size:14px;
+  outline:none;transition:border-color .2s;
+}
+.finput:focus{border-color:rgba(240,167,50,.5)}
+.finput::placeholder{color:var(--muted)}
+
+/* ══════════ MEMBER ROW ══════════ */
+.mlist{display:flex;flex-direction:column;gap:8px}
+.mrow{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:10px;padding:11px 14px;
+  display:flex;align-items:center;gap:10px;transition:border-color .2s;
+}
+.mrow:hover{border-color:var(--border2)}
+.mnum{font-size:11px;color:var(--muted);width:24px;text-align:right;flex-shrink:0}
+.mname{flex:1;font-size:14px;font-weight:500}
+.rbadge{
+  font-family:var(--font-h);font-size:12px;font-weight:700;
+  padding:3px 10px;border-radius:6px;letter-spacing:.5px;
+}
+.r-r2{background:rgba(148,163,184,.14);color:var(--r2);border:1px solid rgba(148,163,184,.28)}
+.r-r3{background:rgba(240,167,50,.14);color:var(--r3);border:1px solid rgba(240,167,50,.28)}
+
+/* ══════════ FAIL TAGS ══════════ */
+.ftags{display:flex;flex-wrap:wrap;gap:8px;min-height:40px}
+.ftag{
+  background:rgba(232,69,69,.12);border:1px solid rgba(232,69,69,.3);
+  color:var(--red2);border-radius:8px;padding:5px 10px 5px 12px;
+  font-size:13px;font-weight:500;
+  display:flex;align-items:center;gap:6px;
+  animation:tagIn .2s ease;
+}
+@keyframes tagIn{from{opacity:0;transform:scale(.9)}to{opacity:1;transform:scale(1)}}
+.ftag button{background:none;border:none;color:rgba(255,107,107,.5);cursor:pointer;font-size:14px;padding:0;line-height:1;display:flex;align-items:center}
+.ftag button:hover{color:var(--red2)}
+
+/* ══════════ AUTOCOMPLETE ══════════ */
+.acwrap{position:relative}
+.aclist{
+  position:absolute;top:calc(100% + 4px);left:0;right:0;
+  background:var(--bg3);border:1px solid var(--border2);
+  border-radius:8px;z-index:100;max-height:200px;overflow-y:auto;display:none;
+}
+.aclist.open{display:block}
+.acitem{
+  padding:9px 14px;font-size:14px;cursor:pointer;
+  display:flex;align-items:center;gap:10px;transition:background .15s;
+}
+.acitem:hover,.acitem.sel{background:var(--surface2)}
+
+/* ══════════ SUMMARY ══════════ */
+.sgrid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+@media(max-width:500px){.sgrid{grid-template-columns:1fr}}
+.scard{border-radius:12px;padding:16px;border:1px solid}
+.scard.dem{background:rgba(232,69,69,.07);border-color:rgba(232,69,69,.25)}
+.scard.pro{background:rgba(46,204,113,.07);border-color:rgba(46,204,113,.25)}
+.scard-hd{font-family:var(--font-h);font-size:15px;font-weight:700;letter-spacing:.5px;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.scard.dem .scard-hd{color:var(--red2)}
+.scard.pro .scard-hd{color:var(--green2)}
+.smrow{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border);font-size:13px}
+.smrow:last-child{border-bottom:none;padding-bottom:0}
+
+/* ══════════ STATS ══════════ */
+.stats{display:flex;gap:12px;margin-bottom:20px;flex-wrap:wrap}
+.sbox{
+  flex:1;min-width:90px;
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:10px;padding:12px 16px;text-align:center;
+}
+.snum{font-family:var(--font-h);font-size:28px;font-weight:700;line-height:1}
+.slbl{font-size:11px;color:var(--muted);margin-top:4px}
+.c-gold{color:var(--gold2)}.c-red{color:var(--red2)}.c-green{color:var(--green2)}.c-blue{color:var(--blue2)}
+
+/* ══════════ HISTORY ══════════ */
+.hwrap{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px 16px;margin-bottom:10px}
+.hhd{display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none}
+.htitle-w{font-family:var(--font-h);font-size:14px;font-weight:700;color:var(--gold);display:flex;align-items:center;gap:8px}
+.hbody{margin-top:10px;padding-top:10px;border-top:1px solid var(--border);display:none}
+.hbody.open{display:block}
+.fpill{display:inline-block;background:rgba(232,69,69,.12);border:1px solid rgba(232,69,69,.25);color:var(--red2);font-size:12px;padding:3px 10px;border-radius:20px;margin:3px}
+.chev{transition:transform .2s;display:inline-block}
+.chev.open{transform:rotate(180deg)}
+
+/* ══════════ ALERTS ══════════ */
+.alert{padding:10px 14px;border-radius:8px;font-size:13px;margin-bottom:14px;display:flex;align-items:flex-start;gap:8px;line-height:1.5}
+.alert-info{background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.3);color:var(--blue2)}
+.alert-warn{background:rgba(240,167,50,.1);border:1px solid rgba(240,167,50,.3);color:var(--gold2)}
+.alert-red{background:rgba(232,69,69,.1);border:1px solid rgba(232,69,69,.3);color:var(--red2)}
+
+/* ══════════ SEARCH ══════════ */
+.sbar{position:relative;margin-bottom:16px}
+.sbar input{padding-left:36px}
+.sicon{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:14px;pointer-events:none}
+
+/* ══════════ EMPTY ══════════ */
+.empty{text-align:center;padding:40px 20px;color:var(--muted)}
+.empty-ico{font-size:36px;margin-bottom:12px}
+.empty-txt{font-size:14px}
+
+/* ══════════ LOADING ══════════ */
+.spinner{
+  width:32px;height:32px;border:3px solid var(--border);
+  border-top-color:var(--gold);border-radius:50%;
+  animation:spin .7s linear infinite;margin:40px auto;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading-wrap{text-align:center;padding:30px 0;color:var(--muted);font-size:13px}
+
+/* ══════════ MODAL ══════════ */
+.modal-ov{
+  display:none;position:fixed;inset:0;
+  background:rgba(0,0,0,.78);z-index:400;
+  align-items:center;justify-content:center;
+  backdrop-filter:blur(5px);
+}
+.modal-ov.open{display:flex;animation:fadeIn .15s ease}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.modal-box{
+  background:var(--bg3);border:1px solid var(--border2);
+  border-radius:18px;padding:30px 26px 24px;
+  width:90%;max-width:420px;
+  box-shadow:0 30px 80px rgba(0,0,0,.65);
+  animation:slideUp .2s ease;
+}
+@keyframes slideUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+.modal-title{font-family:var(--font-h);font-size:20px;font-weight:700;color:var(--gold2);margin-bottom:6px;display:flex;align-items:center;gap:8px}
+.modal-sub{font-size:12px;color:var(--muted);margin-bottom:20px;line-height:1.5}
+.modal-label{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px;display:block}
+.modal-inp{
+  width:100%;background:var(--surface);
+  border:1px solid rgba(240,167,50,.35);
+  border-radius:8px;padding:11px 14px;
+  color:var(--text);font-family:var(--font-b);font-size:15px;
+  outline:none;transition:border-color .2s,box-shadow .2s;margin-bottom:16px;
+}
+.modal-inp:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(240,167,50,.15)}
+.modal-inp::placeholder{color:var(--muted)}
+.modal-acts{display:flex;gap:8px;justify-content:flex-end}
+.modal-err{color:var(--red2);font-size:12px;margin-bottom:10px;display:none}
+.modal-err.show{display:block}
+
+/* ══════════ LOGIN PAGE ══════════ */
+.login-wrap{
+  min-height:100vh;display:flex;align-items:center;justify-content:center;
+  position:relative;z-index:1;padding:20px;
+}
+.login-box{
+  background:var(--bg2);border:1px solid var(--border2);
+  border-radius:20px;padding:36px 30px;width:100%;max-width:380px;
+  box-shadow:0 40px 100px rgba(0,0,0,.5);
+  animation:slideUp .3s ease;
+}
+.login-ico{font-size:40px;text-align:center;margin-bottom:6px}
+.login-title{font-family:var(--font-h);font-size:28px;font-weight:700;color:var(--gold2);text-align:center;letter-spacing:1px}
+.login-sub{font-size:13px;color:var(--muted);text-align:center;margin-bottom:28px}
+
+/* ══════════ TOAST ══════════ */
+#toast{
+  position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(60px);
+  background:var(--surface2);border:1px solid var(--border2);
+  border-radius:10px;padding:10px 20px;font-size:13px;font-weight:500;
+  z-index:999;transition:transform .3s ease,opacity .3s ease;opacity:0;white-space:nowrap;
+  pointer-events:none;
+}
+#toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+#toast.success{border-color:rgba(79,255,171,.4);color:var(--green2)}
+#toast.error{border-color:rgba(255,107,107,.4);color:var(--red2)}
+#toast.info{border-color:rgba(240,167,50,.4);color:var(--gold2)}
+
+/* ══════════ PUBLIC BANNER ══════════ */
+.pub-banner{
+  background:rgba(59,130,246,.08);border:1px solid rgba(59,130,246,.25);
+  border-radius:10px;padding:10px 16px;margin-bottom:16px;
+  display:flex;align-items:center;gap:10px;font-size:13px;color:var(--blue2);
+}
+
+/* ══════════ FIREBASE STATUS ══════════ */
+.fb-status{
+  display:inline-flex;align-items:center;gap:6px;
+  font-size:11px;color:var(--muted);padding:4px 10px;
+  background:var(--surface);border:1px solid var(--border);border-radius:6px;
+}
+.fb-dot{width:6px;height:6px;border-radius:50%;background:var(--muted)}
+.fb-dot.ok{background:var(--green2);box-shadow:0 0 5px var(--green2)}
+.fb-dot.err{background:var(--red2)}
+
+@media(max-width:600px){
+  .header{flex-direction:column;align-items:flex-start}
+  .nav-btn .tab-txt{display:none}
+  .htitle{font-size:19px}
+}
+</style>
+</head>
+<body>
+
+<!-- TOAST -->
+<div id="toast"></div>
+
+<!-- ══════ LOGIN MODAL ══════ -->
+<div class="modal-ov" id="login-modal">
+  <div class="modal-box">
+    <div class="login-ico">🔐</div>
+    <div class="login-title">ADMIN LOGIN</div>
+    <div class="login-sub" style="margin-bottom:20px">Masuk sebagai admin untuk mengelola data aliansi</div>
+    <label class="modal-label">Email</label>
+    <input class="modal-inp" id="li-email" type="email" placeholder="admin@email.com" onkeydown="if(event.key==='Enter')document.getElementById('li-pass').focus()">
+    <label class="modal-label">Password</label>
+    <input class="modal-inp" id="li-pass" type="password" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()">
+    <div class="modal-err" id="li-err"></div>
+    <div class="modal-acts">
+      <button class="btn btn-ghost" onclick="closeLoginModal()">Batal</button>
+      <button class="btn btn-gold" id="li-btn" onclick="doLogin()">🔑 Masuk</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════ EDIT NAME MODAL ══════ -->
+<div class="modal-ov" id="edit-modal">
+  <div class="modal-box">
+    <div class="modal-title">✏️ Edit Nama Member</div>
+    <div class="modal-sub" id="edit-sub">Nama baru akan otomatis terupdate di semua rekap & histori.</div>
+    <label class="modal-label">Nama Baru</label>
+    <input class="modal-inp" id="edit-inp" placeholder="Masukkan nama baru..." onkeydown="if(event.key==='Enter')saveEdit();if(event.key==='Escape')closeEdit()">
+    <div class="modal-err" id="edit-err"></div>
+    <div class="modal-acts">
+      <button class="btn btn-ghost" onclick="closeEdit()">Batal</button>
+      <button class="btn btn-gold" onclick="saveEdit()">💾 Simpan</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════ MAIN APP ══════ -->
+<div class="wrap" id="app" style="display:none">
+
+  <div class="header">
+    <div class="hbrand">
+      <div class="hicon">⚔️</div>
+      <div>
+        <div class="htitle">LAST WAR — ILC #228</div>
+        <div class="hsub">Sistem Promote &amp; Demote Member Aliansi</div>
+      </div>
+    </div>
+    <div class="hright">
+      <span class="fb-status"><span class="fb-dot" id="fb-dot"></span><span id="fb-lbl">Menghubungkan…</span></span>
+      <div class="week-pill" id="week-pill">—</div>
+      <div class="admin-pill" id="admin-pill" onclick="adminPillClick()">
+        <span class="admin-dot off" id="adot"></span>
+        <span id="apill-lbl">Login Admin</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="nav" id="nav-bar">
+    <!-- tabs rendered by JS based on auth state -->
+  </div>
+
+  <div id="page-master" style="display:none"></div>
+  <div id="page-fail"   style="display:none"></div>
+  <div id="page-summary"style="display:none"></div>
+  <div id="page-history"style="display:none"></div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     FIREBASE SDK
+══════════════════════════════════════════ -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import {
+  getFirestore, doc, getDoc, setDoc, onSnapshot, collection, getDocs
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import {
+  getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+// ════════════════════════════════════════
+// 🔧 GANTI DENGAN CONFIG FIREBASE KAMU
+// ════════════════════════════════════════
+const firebaseConfig = {
+  apiKey: "AIzaSyBf6TmQ03UvcfBBjrf4x_ntPdNk4MFQuwA",
+  authDomain: "lastwar-ilc-228.firebaseapp.com",
+  projectId: "lastwar-ilc-228",
+  storageBucket: "lastwar-ilc-228.firebasestorage.app",
+  messagingSenderId: "93113651037",
+  appId: "1:93113651037:web:4d271880907b7f13bf22b4"
+};
+// ════════════════════════════════════════
+
+const fbApp  = initializeApp(firebaseConfig);
+const db     = getFirestore(fbApp);
+const auth   = getAuth(fbApp);
+
+// ── refs ──
+const MEMBERS_DOC = doc(db, 'aliansi', 'members');
+const WEEKS_DOC   = doc(db, 'aliansi', 'weeks');
+
+// ── state ──
+window._state = {
+  members: [],
+  weeks: {},
+  currentWeekKey: getWeekKey(),
+  isAdmin: false,
+  user: null,
+  loaded: false,
+};
+const S = window._state;
+
+// ════════════════════════════════════════
+//  WEEK UTILS
+// ════════════════════════════════════════
+function getWeekKey(date) {
+  const d = date || new Date();
+  const jan1 = new Date(d.getFullYear(), 0, 1);
+  const week = Math.ceil(((d - jan1) / 86400000 + jan1.getDay() + 1) / 7);
+  return `${d.getFullYear()}-W${String(week).padStart(2,'0')}`;
+}
+function getWeekLabel(key) {
+  const [yr, w] = key.split('-W');
+  const jan1 = new Date(parseInt(yr), 0, 1);
+  const off = (parseInt(w) - 1) * 7 - jan1.getDay() + 1;
+  const mon = new Date(jan1.getTime() + off * 86400000);
+  const fri = new Date(mon.getTime() + 4 * 86400000);
+  const fmt = d => `${d.getDate()} ${['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'][d.getMonth()]}`;
+  return `${key} (${fmt(mon)} – ${fmt(fri)})`;
+}
+window.getWeekLabel = getWeekLabel;
+
+// ════════════════════════════════════════
+//  FIREBASE SYNC
+// ════════════════════════════════════════
+let unsubMembers, unsubWeeks;
+
+function startListeners() {
+  unsubMembers = onSnapshot(MEMBERS_DOC, snap => {
+    S.members = snap.exists() ? (snap.data().list || []) : [];
+    if (S.loaded) rerender();
+    setFbStatus(true);
+  }, err => { setFbStatus(false); console.error(err); });
+
+  unsubWeeks = onSnapshot(WEEKS_DOC, snap => {
+    S.weeks = snap.exists() ? (snap.data().data || {}) : {};
+    if (S.loaded) rerender();
+    S.loaded = true;
+    document.getElementById('app').style.display = 'block';
+    updateUI();
+  }, err => { setFbStatus(false); console.error(err); });
+}
+
+async function saveMembers() {
+  await setDoc(MEMBERS_DOC, { list: S.members });
+}
+async function saveWeeks() {
+  await setDoc(WEEKS_DOC, { data: S.weeks });
+}
+
+function setFbStatus(ok) {
+  document.getElementById('fb-dot').className = 'fb-dot ' + (ok ? 'ok' : 'err');
+  document.getElementById('fb-lbl').textContent = ok ? 'Terhubung' : 'Offline';
+}
+
+// ════════════════════════════════════════
+//  AUTH
+// ════════════════════════════════════════
+onAuthStateChanged(auth, user => {
+  S.user    = user;
+  S.isAdmin = !!user;
+  updateUI();
+  if (!S.loaded) startListeners();
+});
+
+window.doLogin = async function() {
+  const email = document.getElementById('li-email').value.trim();
+  const pass  = document.getElementById('li-pass').value;
+  const btn   = document.getElementById('li-btn');
+  const err   = document.getElementById('li-err');
+  err.classList.remove('show');
+  if (!email || !pass) { showErr('li-err','Email dan password wajib diisi.'); return; }
+  btn.disabled = true; btn.textContent = 'Memproses…';
+  try {
+    await signInWithEmailAndPassword(auth, email, pass);
+    closeLoginModal();
+    toast('✅ Login berhasil! Selamat datang, Admin.','success');
+  } catch(e) {
+    let msg = 'Login gagal. Periksa email & password.';
+    if (e.code === 'auth/user-not-found' || e.code === 'auth/wrong-password' || e.code === 'auth/invalid-credential') msg = 'Email atau password salah.';
+    if (e.code === 'auth/too-many-requests') msg = 'Terlalu banyak percobaan. Coba lagi nanti.';
+    showErr('li-err', msg);
+  }
+  btn.disabled = false; btn.textContent = '🔑 Masuk';
+};
+
+window.doLogout = async function() {
+  await signOut(auth);
+  toast('👋 Logout berhasil.','info');
+};
+
+window.adminPillClick = function() {
+  if (S.isAdmin) doLogout();
+  else openLoginModal();
+};
+
+// ════════════════════════════════════════
+//  UI UPDATER
+// ════════════════════════════════════════
+function updateUI() {
+  // week pill
+  document.getElementById('week-pill').textContent = S.currentWeekKey;
+  // admin pill
+  const dot  = document.getElementById('adot');
+  const lbl  = document.getElementById('apill-lbl');
+  if (S.isAdmin) {
+    dot.className = 'admin-dot';
+    lbl.textContent = '👑 Admin — Logout';
+  } else {
+    dot.className = 'admin-dot off';
+    lbl.textContent = '🔒 Login Admin';
+  }
+  renderNav();
+  rerender();
+}
+
+function renderNav() {
+  const failCount = getFailIds(S.currentWeekKey).length;
+  const nav = document.getElementById('nav-bar');
+  nav.innerHTML = `
+    <button class="nav-btn ${activeTab==='summary'?'active':''}" onclick="showTab('summary')">
+      <span>📊</span><span class="tab-txt">Summary</span>
+    </button>
+    <button class="nav-btn ${activeTab==='history'?'active':''}" onclick="showTab('history')">
+      <span>📜</span><span class="tab-txt">History</span>
+    </button>
+    ${S.isAdmin ? `
+    <button class="nav-btn ${activeTab==='fail'?'active':''}" onclick="showTab('fail')">
+      <span>❌</span><span class="tab-txt">Input Fail</span>
+      <span class="nbadge">${failCount}</span>
+    </button>
+    <button class="nav-btn ${activeTab==='master'?'active':''}" onclick="showTab('master')">
+      <span>👥</span><span class="tab-txt">Master</span>
+      <span class="nbadge">${S.members.length}</span>
+    </button>` : ''}
+  `;
+  // redirect if current tab is admin-only and user logged out
+  if (!S.isAdmin && (activeTab === 'master' || activeTab === 'fail')) {
+    activeTab = 'summary';
+  }
+}
+
+let activeTab = 'summary';
+window.showTab = function(tab) {
+  if (!S.isAdmin && (tab==='master'||tab==='fail')) {
+    toast('🔒 Halaman ini khusus Admin.','error'); return;
+  }
+  activeTab = tab;
+  ['master','fail','summary','history'].forEach(t => {
+    document.getElementById('page-'+t).style.display = 'none';
+  });
+  document.getElementById('page-'+tab).style.display = 'block';
+  renderNav();
+  rerender();
+};
+
+function rerender() {
+  if (activeTab==='master')  renderMaster();
+  if (activeTab==='fail')    renderFail();
+  if (activeTab==='summary') renderSummary();
+  if (activeTab==='history') renderHistory();
+}
+
+// initial tab
+showTab('summary');
+
+// ════════════════════════════════════════
+//  HELPERS
+// ════════════════════════════════════════
+function getFailIds(wk) { return S.weeks[wk] || []; }
+function memberById(id) { return S.members.find(m=>m.id===id); }
+function esc(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function getPrevWeek() {
+  const keys = Object.keys(S.weeks).sort();
+  const idx  = keys.indexOf(S.currentWeekKey);
+  return idx > 0 ? keys[idx-1] : null;
+}
+function computeSummary() {
+  const cur  = getFailIds(S.currentWeekKey);
+  const prev = getPrevWeek() ? getFailIds(getPrevWeek()) : [];
+  const demote=[], promote=[], stable=[];
+  for (const m of S.members) {
+    if (cur.includes(m.id))               demote.push(m);
+    else if (prev.includes(m.id))         promote.push(m);
+    else                                  stable.push(m);
+  }
+  return { demote, promote, stable };
+}
+function toast(msg, type='info') {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = 'show ' + type;
+  clearTimeout(el._t);
+  el._t = setTimeout(() => el.className='', 3000);
+}
+function showErr(id, msg) {
+  const el = document.getElementById(id);
+  el.textContent = msg; el.classList.add('show');
+}
+
+// ════════════════════════════════════════
+//  LOGIN MODAL
+// ════════════════════════════════════════
+window.openLoginModal = function() {
+  document.getElementById('login-modal').classList.add('open');
+  setTimeout(()=>document.getElementById('li-email').focus(),80);
+};
+window.closeLoginModal = function() {
+  document.getElementById('login-modal').classList.remove('open');
+  document.getElementById('li-err').classList.remove('show');
+};
+document.getElementById('login-modal').addEventListener('click', e => {
+  if (e.target===document.getElementById('login-modal')) closeLoginModal();
+});
+
+// ════════════════════════════════════════
+//  EDIT NAME MODAL
+// ════════════════════════════════════════
+let editId = null;
+window.openEdit = function(id) {
+  const m = memberById(id);
+  if (!m) return;
+  editId = id;
+  document.getElementById('edit-sub').textContent = `Nama saat ini: "${m.name}"`;
+  const inp = document.getElementById('edit-inp');
+  inp.value = m.name;
+  document.getElementById('edit-err').classList.remove('show');
+  document.getElementById('edit-modal').classList.add('open');
+  setTimeout(()=>{inp.focus();inp.select();},80);
+};
+window.closeEdit = function() {
+  document.getElementById('edit-modal').classList.remove('open');
+  editId=null;
+};
+window.saveEdit = async function() {
+  const name = document.getElementById('edit-inp').value.trim();
+  if (!name) { showErr('edit-err','Nama tidak boleh kosong!'); return; }
+  if (S.members.find(m=>m.name.toLowerCase()===name.toLowerCase()&&m.id!==editId)) {
+    showErr('edit-err','Nama sudah dipakai member lain!'); return;
+  }
+  const m = S.members.find(m=>m.id===editId);
+  if (m) { m.name=name; await saveMembers(); closeEdit(); toast('✅ Nama berhasil diubah.','success'); }
+};
+document.getElementById('edit-modal').addEventListener('click', e => {
+  if (e.target===document.getElementById('edit-modal')) closeEdit();
+});
+
+// ════════════════════════════════════════
+//  PAGE: MASTER MEMBER (ADMIN ONLY)
+// ════════════════════════════════════════
+let msearch='';
+function renderMaster() {
+  if (!S.isAdmin) return;
+  const page = document.getElementById('page-master');
+  const list = S.members.filter(m=>m.name.toLowerCase().includes(msearch.toLowerCase()))
+                         .slice().sort((a,b)=>a.name.localeCompare(b.name));
+  page.innerHTML = `
+    <div class="card">
+      <div class="card-hd"><div class="card-title">➕ Tambah Member</div></div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap">
+        <div style="flex:2;min-width:160px">
+          <input class="finput" id="add-n" placeholder="Nama member..." onkeydown="if(event.key==='Enter')addMember()">
+        </div>
+        <div style="flex:1;min-width:90px">
+          <select class="finput" id="add-r">
+            <option value="R2">R2</option>
+            <option value="R3" selected>R3</option>
+          </select>
+        </div>
+        <button class="btn btn-gold" onclick="addMember()">+ Tambah</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-hd">
+        <div class="card-title">👥 Daftar Member <span style="color:var(--muted);font-size:13px;font-weight:400">(${S.members.length})</span></div>
+        <button class="btn btn-ghost btn-sm" onclick="showImport()">⬆ Import</button>
+      </div>
+      <div class="sbar"><span class="sicon">🔍</span>
+        <input class="finput" style="padding-left:36px" placeholder="Cari nama..." value="${esc(msearch)}" oninput="msearch=this.value;renderMaster()">
+      </div>
+      ${list.length===0?`<div class="empty"><div class="empty-ico">🪖</div><div class="empty-txt">Belum ada member${msearch?' cocok':''}</div></div>`:`
+      <div class="mlist">
+        ${list.map((m,i)=>`
+          <div class="mrow">
+            <span class="mnum">${i+1}</span>
+            <span class="mname">${esc(m.name)}</span>
+            <span class="rbadge r-${m.rank.toLowerCase()}">${m.rank}</span>
+            <select class="finput" style="width:68px;padding:4px 8px;font-size:12px" onchange="changeRank('${m.id}',this.value)">
+              <option ${m.rank==='R2'?'selected':''}>R2</option>
+              <option ${m.rank==='R3'?'selected':''}>R3</option>
+            </select>
+            <button class="btn btn-blue btn-sm" onclick="openEdit('${m.id}')">✏️</button>
+            <button class="btn btn-red btn-sm" onclick="delMember('${m.id}')">✕</button>
+          </div>`).join('')}
+      </div>`}
+    </div>
+
+    <!-- Import Modal -->
+    <div id="imp-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:300;align-items:center;justify-content:center;backdrop-filter:blur(4px)">
+      <div style="background:var(--bg3);border:1px solid var(--border2);border-radius:16px;padding:26px;width:90%;max-width:460px;animation:slideUp .2s ease">
+        <div class="card-title" style="margin-bottom:12px">⬆ Import Member (satu nama per baris)</div>
+        <div class="alert alert-info">Duplikat nama akan diabaikan otomatis. Semua ditambahkan sebagai R3.</div>
+        <textarea class="finput" id="imp-txt" rows="8" placeholder="NamaMember1&#10;NamaMember2&#10;..." style="resize:vertical"></textarea>
+        <div style="display:flex;gap:8px;margin-top:12px;justify-content:flex-end">
+          <button class="btn btn-ghost" onclick="hideImport()">Batal</button>
+          <button class="btn btn-gold" onclick="doImport()">Import</button>
+        </div>
+      </div>
+    </div>
+  `;
+}
+window.showImport = () => { const m=document.getElementById('imp-modal'); if(m) m.style.display='flex'; };
+window.hideImport = () => { const m=document.getElementById('imp-modal'); if(m) m.style.display='none'; };
+window.doImport   = async function() {
+  const txt = document.getElementById('imp-txt').value;
+  const lines = txt.split('\n').map(l=>l.trim()).filter(Boolean);
+  let added=0;
+  for (const name of lines) {
+    if (!S.members.find(m=>m.name.toLowerCase()===name.toLowerCase())) {
+      S.members.push({id:'id_'+Date.now()+'_'+Math.random().toString(36).slice(2), name, rank:'R3'});
+      added++;
+    }
+  }
+  if (added) { await saveMembers(); hideImport(); toast(`✅ ${added} member diimport!`,'success'); }
+  else { toast('Tidak ada member baru yang ditambahkan.','info'); }
+};
+window.addMember = async function() {
+  const name=document.getElementById('add-n').value.trim();
+  const rank=document.getElementById('add-r').value;
+  if (!name) return;
+  if (S.members.find(m=>m.name.toLowerCase()===name.toLowerCase())) { toast('❌ Nama sudah ada!','error'); return; }
+  S.members.push({id:'id_'+Date.now(), name, rank});
+  await saveMembers();
+  document.getElementById('add-n').value='';
+  toast('✅ Member ditambahkan.','success');
+};
+window.delMember = async function(id) {
+  if (!confirm('Hapus member ini?')) return;
+  S.members = S.members.filter(m=>m.id!==id);
+  for (const wk in S.weeks) S.weeks[wk]=S.weeks[wk].filter(i=>i!==id);
+  await saveMembers(); await saveWeeks();
+  toast('🗑 Member dihapus.','info');
+};
+window.changeRank = async function(id, rank) {
+  const m=S.members.find(m=>m.id===id);
+  if (m) { m.rank=rank; await saveMembers(); toast('✅ Rank diubah.','success'); }
+};
+
+// ════════════════════════════════════════
+//  PAGE: INPUT FAIL (ADMIN ONLY)
+// ════════════════════════════════════════
+let fsearch='', acIdx=-1;
+function renderFail() {
+  if (!S.isAdmin) return;
+  const page   = document.getElementById('page-fail');
+  const failIds = getFailIds(S.currentWeekKey);
+  const failMs  = failIds.map(id=>memberById(id)).filter(Boolean);
+
+  page.innerHTML = `
+    <div class="card">
+      <div class="card-hd"><div class="card-title">📅 Minggu Aktif</div></div>
+      <div class="alert alert-warn">⚠ Data fail untuk: <strong>${getWeekLabel(S.currentWeekKey)}</strong></div>
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+        <span style="font-size:13px;color:var(--muted)">Ubah minggu:</span>
+        <input type="week" class="finput" style="width:auto" value="${S.currentWeekKey}" onchange="changeWeek(this.value)">
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-hd">
+        <div class="card-title">❌ Member Gagal (${failIds.length})</div>
+        ${failIds.length?`<button class="btn btn-red btn-sm" onclick="clearFail()">Hapus Semua</button>`:''}
+      </div>
+      <div class="alert alert-info">💡 Ketik nama member yang gagal ≥7.2 juta poin, lalu Enter atau pilih dari daftar.</div>
+      <div class="acwrap" style="margin-bottom:14px">
+        <input class="finput" id="fi" placeholder="Cari nama member gagal..."
+          oninput="onFI(this.value)" onkeydown="onFK(event)">
+        <div class="aclist" id="acl"></div>
+      </div>
+      <div class="ftags" id="ftags">
+        ${failMs.length===0?`<span style="color:var(--muted);font-size:13px">Belum ada input gagal minggu ini.</span>`:
+          failMs.map(m=>`
+            <div class="ftag">
+              <span class="rbadge r-${m.rank.toLowerCase()}" style="font-size:10px;padding:1px 6px">${m.rank}</span>
+              ${esc(m.name)}
+              <button onclick="remFail('${m.id}')">✕</button>
+            </div>`).join('')}
+      </div>
+    </div>
+  `;
+}
+window.changeWeek = function(v) {
+  if (!v) return;
+  S.currentWeekKey=v;
+  document.getElementById('week-pill').textContent=v;
+  renderFail(); renderNav();
+};
+window.clearFail = async function() {
+  if (!confirm('Hapus semua fail minggu ini?')) return;
+  S.weeks[S.currentWeekKey]=[];
+  await saveWeeks(); toast('🗑 Data fail dihapus.','info');
+};
+window.onFI = function(v) {
+  fsearch=v.trim(); acIdx=-1;
+  const ac=document.getElementById('acl');
+  if (!fsearch) { ac.classList.remove('open'); return; }
+  const ids=getFailIds(S.currentWeekKey);
+  const hits=S.members.filter(m=>m.name.toLowerCase().includes(fsearch.toLowerCase())&&!ids.includes(m.id)).slice(0,8);
+  if (!hits.length) { ac.classList.remove('open'); return; }
+  ac.innerHTML=hits.map(m=>`
+    <div class="acitem" data-id="${m.id}" onclick="addFail('${m.id}')">
+      <span class="rbadge r-${m.rank.toLowerCase()}" style="font-size:10px;padding:1px 7px">${m.rank}</span>
+      ${esc(m.name)}
+    </div>`).join('');
+  ac.classList.add('open');
+};
+window.onFK = function(e) {
+  const ac=document.getElementById('acl');
+  const items=ac.querySelectorAll('.acitem');
+  if (e.key==='ArrowDown'){acIdx=Math.min(acIdx+1,items.length-1);hlAc(items);e.preventDefault();}
+  else if(e.key==='ArrowUp'){acIdx=Math.max(acIdx-1,-1);hlAc(items);e.preventDefault();}
+  else if(e.key==='Enter'){
+    if(acIdx>=0&&items[acIdx]) addFail(items[acIdx].dataset.id);
+    else if(items.length===1) addFail(items[0].dataset.id);
+  }
+  else if(e.key==='Escape'){ac.classList.remove('open');acIdx=-1;}
+};
+function hlAc(items){items.forEach((el,i)=>el.classList.toggle('sel',i===acIdx));}
+window.addFail = async function(id) {
+  if (!S.weeks[S.currentWeekKey]) S.weeks[S.currentWeekKey]=[];
+  if (!S.weeks[S.currentWeekKey].includes(id)) {
+    S.weeks[S.currentWeekKey].push(id);
+    await saveWeeks();
+  }
+  const fi=document.getElementById('fi');
+  if(fi){fi.value='';document.getElementById('acl').classList.remove('open');}
+  fsearch='';acIdx=-1;
+  toast('❌ Member ditambahkan ke daftar gagal.','info');
+};
+window.remFail = async function(id) {
+  if (S.weeks[S.currentWeekKey]) {
+    S.weeks[S.currentWeekKey]=S.weeks[S.currentWeekKey].filter(i=>i!==id);
+    await saveWeeks(); toast('✅ Member dihapus dari daftar gagal.','success');
+  }
+};
+document.addEventListener('click', e => {
+  const ac=document.getElementById('acl');
+  if(ac&&!e.target.closest('.acwrap')) ac.classList.remove('open');
+});
+
+// ════════════════════════════════════════
+//  PAGE: SUMMARY (PUBLIC)
+// ════════════════════════════════════════
+function renderSummary() {
+  const page=document.getElementById('page-summary');
+  if (!S.loaded || !S.members.length) {
+    page.innerHTML=`<div class="card"><div class="loading-wrap"><div class="spinner"></div>Memuat data…</div></div>`;
+    return;
+  }
+  const {demote,promote,stable}=computeSummary();
+  const prevKey=getPrevWeek();
+
+  page.innerHTML=`
+    ${!S.isAdmin?`<div class="pub-banner">👁 Mode Publik — Hanya bisa melihat. Login sebagai Admin untuk mengedit. <button class="btn btn-ghost btn-sm" style="margin-left:auto" onclick="openLoginModal()">🔑 Login</button></div>`:''}
+    <div class="card">
+      <div class="card-hd">
+        <div class="card-title">📊 Summary Minggu Ini</div>
+        <button class="btn btn-ghost btn-sm" onclick="exportSummary()">⬇ Export</button>
+      </div>
+      <div class="alert alert-info">
+        📅 <strong>${getWeekLabel(S.currentWeekKey)}</strong>
+        ${prevKey?` — dibanding minggu lalu (${getWeekLabel(prevKey)})`:'— (belum ada data minggu sebelumnya)'}
+      </div>
+      <div class="stats">
+        <div class="sbox"><div class="snum c-gold">${S.members.length}</div><div class="slbl">Total Member</div></div>
+        <div class="sbox"><div class="snum c-red">${demote.length}</div><div class="slbl">⬇ Demote</div></div>
+        <div class="sbox"><div class="snum c-green">${promote.length}</div><div class="slbl">⬆ Promote</div></div>
+        <div class="sbox"><div class="snum c-blue">${stable.length}</div><div class="slbl">✓ Stabil</div></div>
+      </div>
+    </div>
+
+    <div class="sgrid">
+      <div class="scard dem">
+        <div class="scard-hd">⬇ DEMOTE ke R2 (${demote.length})</div>
+        ${demote.length===0?`<div style="color:var(--muted);font-size:13px">Tidak ada yang demote minggu ini 🎉</div>`:
+          demote.map(m=>`
+            <div class="smrow">
+              <span style="font-size:15px">⬇</span>
+              <span style="flex:1;font-size:13px;font-weight:500">${esc(m.name)}</span>
+              <span style="font-size:11px;color:var(--red2)">→ R2</span>
+            </div>`).join('')}
+      </div>
+      <div class="scard pro">
+        <div class="scard-hd">⬆ PROMOTE ke R3 (${promote.length})</div>
+        ${promote.length===0?`<div style="color:var(--muted);font-size:13px">Belum ada yang promote minggu ini.</div>`:
+          promote.map(m=>`
+            <div class="smrow">
+              <span style="font-size:15px">⬆</span>
+              <span style="flex:1;font-size:13px;font-weight:500">${esc(m.name)}</span>
+              <span style="font-size:11px;color:var(--green2)">→ R3</span>
+            </div>`).join('')}
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-hd">
+        <div class="card-title">✅ Stabil R3 (${stable.length})</div>
+        <span class="nbadge">${stable.length}</span>
+      </div>
+      <div style="display:flex;flex-wrap:wrap;gap:8px">
+        ${stable.length===0?`<span style="color:var(--muted);font-size:13px">—</span>`:
+          stable.map(m=>`<span style="background:var(--golddim);border:1px solid rgba(240,167,50,.25);color:var(--gold);font-size:12px;padding:4px 12px;border-radius:20px">${esc(m.name)}</span>`).join('')}
+      </div>
+    </div>
+  `;
+}
+window.exportSummary = function() {
+  const {demote,promote,stable}=computeSummary();
+  const prevKey=getPrevWeek();
+  let txt=`REKAP PROMOTE & DEMOTE — Last War ILC #228\n`;
+  txt+=`Minggu: ${getWeekLabel(S.currentWeekKey)}\n`;
+  if(prevKey) txt+=`Dibanding: ${getWeekLabel(prevKey)}\n`;
+  txt+=`\n${'='.repeat(44)}\n`;
+  txt+=`\n⬇ DEMOTE KE R2 (${demote.length}):\n`;
+  demote.forEach((m,i)=>txt+=`  ${i+1}. ${m.name}\n`);
+  txt+=`\n⬆ PROMOTE KE R3 (${promote.length}):\n`;
+  promote.forEach((m,i)=>txt+=`  ${i+1}. ${m.name}\n`);
+  txt+=`\n✅ STABIL R3 (${stable.length}):\n`;
+  stable.forEach((m,i)=>txt+=`  ${i+1}. ${m.name}\n`);
+  txt+=`\n${'='.repeat(44)}\nTotal member: ${S.members.length}\n`;
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([txt],{type:'text/plain'}));
+  a.download=`rekap_${S.currentWeekKey}.txt`;a.click();
+};
+
+// ════════════════════════════════════════
+//  PAGE: HISTORY (PUBLIC)
+// ════════════════════════════════════════
+function renderHistory() {
+  const page=document.getElementById('page-history');
+  const keys=Object.keys(S.weeks).sort().reverse();
+  if (!keys.length) {
+    page.innerHTML=`
+      ${!S.isAdmin?`<div class="pub-banner">👁 Mode Publik — Login sebagai Admin untuk mengedit. <button class="btn btn-ghost btn-sm" style="margin-left:auto" onclick="openLoginModal()">🔑 Login</button></div>`:''}
+      <div class="card"><div class="empty"><div class="empty-ico">📜</div><div class="empty-txt">Belum ada data history.</div></div></div>`;
+    return;
+  }
+  page.innerHTML=`
+    ${!S.isAdmin?`<div class="pub-banner">👁 Mode Publik — Login sebagai Admin untuk mengedit. <button class="btn btn-ghost btn-sm" style="margin-left:auto" onclick="openLoginModal()">🔑 Login</button></div>`:''}
+    <div class="card">
+      <div class="card-hd"><div class="card-title">📜 History Fail Per Minggu</div></div>
+      ${keys.map((wk,i)=>{
+        const ids=getFailIds(wk);
+        const ms=ids.map(id=>memberById(id)).filter(Boolean);
+        const isCur=wk===S.currentWeekKey;
+        return `
+          <div class="hwrap">
+            <div class="hhd" onclick="togH('hb-${i}','hc-${i}')">
+              <div class="htitle-w">
+                ${isCur?'🔴 ':''}${getWeekLabel(wk)}
+                <span class="nbadge">${ids.length} fail</span>
+              </div>
+              <span class="chev" id="hc-${i}">▼</span>
+            </div>
+            <div class="hbody" id="hb-${i}">
+              ${ms.length===0?'<span style="color:var(--muted);font-size:13px">Tidak ada member fail.</span>':
+                ms.map(m=>`<span class="fpill">${esc(m.name)}</span>`).join('')}
+              ${S.isAdmin?`<div style="margin-top:12px"><button class="btn btn-red btn-sm" onclick="delWeek('${wk}');event.stopPropagation()">🗑 Hapus Minggu Ini</button></div>`:''}
+            </div>
+          </div>`;
+      }).join('')}
+    </div>
+  `;
+}
+window.togH = function(bid,cid) {
+  document.getElementById(bid).classList.toggle('open');
+  document.getElementById(cid).classList.toggle('open');
+};
+window.delWeek = async function(wk) {
+  if (!confirm(`Hapus data fail untuk ${getWeekLabel(wk)}?`)) return;
+  delete S.weeks[wk];
+  await saveWeeks(); toast('🗑 Data minggu dihapus.','info');
+};
+
+</script>
+</body>
+</html>
