@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -465,6 +466,7 @@ window._state = {
   members: [],
   weeks: {},
   currentWeekKey: getWeekKey(),
+  summaryWeekKey: getWeekKey(),
   isAdmin: false,
   user: null,
   loaded: false,
@@ -601,7 +603,7 @@ function renderNav() {
       <span class="nbadge">${failCount}</span>
     </button>
     <button class="nav-btn ${activeTab==='master'?'active':''}" onclick="showTab('master')">
-      <span>👥</span><span class="tab-txt">Master</span>
+      <span>👥</span><span class="tab-txt">Master Member</span>
       <span class="nbadge">${S.members.length}</span>
     </button>` : ''}
   `;
@@ -643,14 +645,17 @@ function memberById(id) { return S.members.find(m=>m.id===id); }
 function esc(s) {
   return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
-function getPrevWeek() {
+function getPrevWeek(refKey) {
+  const ref = refKey || S.currentWeekKey;
   const keys = Object.keys(S.weeks).sort();
-  const idx  = keys.indexOf(S.currentWeekKey);
+  const idx  = keys.indexOf(ref);
   return idx > 0 ? keys[idx-1] : null;
 }
-function computeSummary() {
-  const cur  = getFailIds(S.currentWeekKey);
-  const prev = getPrevWeek() ? getFailIds(getPrevWeek()) : [];
+function computeSummary(refKey) {
+  const wk   = refKey || S.currentWeekKey;
+  const cur  = getFailIds(wk);
+  const prevK = getPrevWeek(wk);
+  const prev = prevK ? getFailIds(prevK) : [];
   const demote=[], promote=[], stable=[];
   for (const m of S.members) {
     if (cur.includes(m.id))               demote.push(m);
@@ -931,18 +936,38 @@ function renderSummary() {
     page.innerHTML=`<div class="card"><div class="loading-wrap"><div class="spinner"></div>Memuat data…</div></div>`;
     return;
   }
-  const {demote,promote,stable}=computeSummary();
-  const prevKey=getPrevWeek();
+
+  // Build list of available weeks (sorted descending) + always include currentWeekKey
+  const allWeekKeys = [...new Set([...Object.keys(S.weeks), S.currentWeekKey])].sort().reverse();
+  // Ensure summaryWeekKey is valid
+  if (!allWeekKeys.includes(S.summaryWeekKey)) S.summaryWeekKey = S.currentWeekKey;
+
+  const selWeek = S.summaryWeekKey;
+  const {demote,promote,stable}=computeSummary(selWeek);
+  const prevKey=getPrevWeek(selWeek);
+  const isCurrentWeek = selWeek === S.currentWeekKey;
+
+  const weekOptions = allWeekKeys.map(wk => {
+    const isNow = wk === S.currentWeekKey;
+    return `<option value="${wk}" ${wk===selWeek?'selected':''}>${getWeekLabel(wk)}${isNow?' ★ (Sekarang)':''}</option>`;
+  }).join('');
 
   page.innerHTML=`
     ${!S.isAdmin?`<div class="pub-banner">👁 Mode Publik — Hanya bisa melihat. Login sebagai Admin untuk mengedit. <button class="btn btn-ghost btn-sm" style="margin-left:auto" onclick="openLoginModal()">🔑 Login</button></div>`:''}
     <div class="card">
       <div class="card-hd">
-        <div class="card-title">📊 Summary Minggu Ini</div>
+        <div class="card-title">📊 Summary Rekap</div>
         <button class="btn btn-ghost btn-sm" onclick="exportSummary()">⬇ Export</button>
       </div>
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:14px">
+        <span style="font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;white-space:nowrap">📅 Pilih Minggu:</span>
+        <select class="finput" style="flex:1;min-width:200px;max-width:400px" onchange="changeSummaryWeek(this.value)">
+          ${weekOptions}
+        </select>
+        ${!isCurrentWeek?`<button class="btn btn-ghost btn-sm" onclick="changeSummaryWeek('${S.currentWeekKey}')">↩ Kembali ke Sekarang</button>`:''}
+      </div>
       <div class="alert alert-info">
-        📅 <strong>${getWeekLabel(S.currentWeekKey)}</strong>
+        📅 <strong>${getWeekLabel(selWeek)}</strong>${isCurrentWeek?' <span style="background:rgba(46,204,113,.15);color:var(--green2);font-size:11px;padding:2px 8px;border-radius:10px;font-weight:600;margin-left:4px">MINGGU INI</span>':''}
         ${prevKey?` — dibanding minggu lalu (${getWeekLabel(prevKey)})`:'— (belum ada data minggu sebelumnya)'}
       </div>
       <div class="stats">
@@ -988,11 +1013,17 @@ function renderSummary() {
     </div>
   `;
 }
+window.changeSummaryWeek = function(v) {
+  if (!v) return;
+  S.summaryWeekKey = v;
+  renderSummary();
+};
 window.exportSummary = function() {
-  const {demote,promote,stable}=computeSummary();
-  const prevKey=getPrevWeek();
+  const selWeek = S.summaryWeekKey;
+  const {demote,promote,stable}=computeSummary(selWeek);
+  const prevKey=getPrevWeek(selWeek);
   let txt=`REKAP PROMOTE & DEMOTE — Last War ILC #228\n`;
-  txt+=`Minggu: ${getWeekLabel(S.currentWeekKey)}\n`;
+  txt+=`Minggu: ${getWeekLabel(selWeek)}\n`;
   if(prevKey) txt+=`Dibanding: ${getWeekLabel(prevKey)}\n`;
   txt+=`\n${'='.repeat(44)}\n`;
   txt+=`\n⬇ DEMOTE KE R2 (${demote.length}):\n`;
@@ -1004,7 +1035,7 @@ window.exportSummary = function() {
   txt+=`\n${'='.repeat(44)}\nTotal member: ${S.members.length}\n`;
   const a=document.createElement('a');
   a.href=URL.createObjectURL(new Blob([txt],{type:'text/plain'}));
-  a.download=`rekap_${S.currentWeekKey}.txt`;a.click();
+  a.download=`rekap_${S.summaryWeekKey}.txt`;a.click();
 };
 
 // ════════════════════════════════════════
