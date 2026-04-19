@@ -472,10 +472,11 @@ body::after{
     <!-- tabs rendered by JS based on auth state -->
   </div>
 
-  <div id="page-master" style="display:none"></div>
-  <div id="page-fail"   style="display:none"></div>
-  <div id="page-summary"style="display:none"></div>
-  <div id="page-history"style="display:none"></div>
+  <div id="page-master"     style="display:none"></div>
+  <div id="page-fail"       style="display:none"></div>
+  <div id="page-summary"   style="display:none"></div>
+  <div id="page-history"   style="display:none"></div>
+  <div id="page-alwaysfail"style="display:none"></div>
 </div>
 
 <!-- ══════════════════════════════════════════
@@ -664,6 +665,9 @@ function renderNav() {
     <button class="nav-btn ${activeTab==='history'?'active':''}" onclick="showTab('history')">
       <span>📜</span><span class="tab-txt">History</span>
     </button>
+    <button class="nav-btn ${activeTab==='alwaysfail'?'active':''}" onclick="showTab('alwaysfail')">
+      <span>🚨</span><span class="tab-txt">Sering Gagal</span>
+    </button>
     ${S.isAdmin ? `
     <button class="nav-btn ${activeTab==='fail'?'active':''}" onclick="showTab('fail')">
       <span>❌</span><span class="tab-txt">Input Fail</span>
@@ -686,7 +690,7 @@ window.showTab = function(tab) {
     toast('🔒 Halaman ini khusus Admin.','error'); return;
   }
   activeTab = tab;
-  ['master','fail','summary','history'].forEach(t => {
+  ['master','fail','summary','history','alwaysfail'].forEach(t => {
     document.getElementById('page-'+t).style.display = 'none';
   });
   document.getElementById('page-'+tab).style.display = 'block';
@@ -695,10 +699,11 @@ window.showTab = function(tab) {
 };
 
 function rerender() {
-  if (activeTab==='master')  renderMaster();
-  if (activeTab==='fail')    renderFail();
-  if (activeTab==='summary') renderSummary();
-  if (activeTab==='history') renderHistory();
+  if (activeTab==='master')     renderMaster();
+  if (activeTab==='fail')       renderFail();
+  if (activeTab==='summary')    renderSummary();
+  if (activeTab==='history')    renderHistory();
+  if (activeTab==='alwaysfail') renderAlwaysFail();
 }
 
 // initial tab
@@ -1182,6 +1187,94 @@ window.delWeek = async function(wk) {
   delete S.weeks[wk];
   await saveWeeks(); toast('🗑 Data minggu dihapus.','info');
 };
+
+// ════════════════════════════════════════
+//  PAGE: SERING GAGAL (PUBLIC)
+// ════════════════════════════════════════
+let minFailFilter = 2;
+
+function computeFailStats() {
+  const weekKeys = Object.keys(S.weeks).sort();
+  const totalWeeks = weekKeys.length;
+  const stats = [];
+  for (const m of S.members) {
+    const failWeeks = weekKeys.filter(wk => S.weeks[wk].includes(m.id));
+    const failCount = failWeeks.length;
+    if (failCount === 0) continue;
+    let streak = 0;
+    for (let i = weekKeys.length - 1; i >= 0; i--) {
+      if (S.weeks[weekKeys[i]].includes(m.id)) streak++;
+      else break;
+    }
+    stats.push({ member: m, failCount, streak, failWeeks, totalWeeks });
+  }
+  stats.sort((a, b) => b.failCount - a.failCount || b.streak - a.streak);
+  return { stats, totalWeeks };
+}
+
+function renderAlwaysFail() {
+  const page = document.getElementById('page-alwaysfail');
+  if (!S.loaded || !S.members.length) {
+    page.innerHTML = `<div class="card"><div class="loading-wrap"><div class="spinner"></div>Memuat data…</div></div>`;
+    return;
+  }
+  const { stats, totalWeeks } = computeFailStats();
+  const filtered = stats.filter(s => s.failCount >= minFailFilter);
+  const filterBtns = [1,2,3,4,5].map(n =>
+    `<button class="btn ${minFailFilter===n?'btn-gold':'btn-ghost'} btn-sm" onclick="setMinFail(${n})">≥${n}x</button>`
+  ).join('');
+
+  page.innerHTML = `
+    ${!S.isAdmin ? `<div class="pub-banner">👁 Mode Publik — Login sebagai Admin untuk mengedit. <button class="btn btn-ghost btn-sm" style="margin-left:auto" onclick="openLoginModal()">🔑 Login</button></div>` : ''}
+    <div class="card">
+      <div class="card-hd"><div class="card-title">🚨 Player Sering Gagal</div></div>
+      <div class="alert alert-warn">⚠ Berdasarkan <strong>${totalWeeks} minggu</strong> data history. Menampilkan player yang gagal minimal <strong>${minFailFilter}x</strong>.</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;align-items:center">
+        <span style="font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.6px">Filter min. fail:</span>
+        ${filterBtns}
+      </div>
+      <div class="stats">
+        <div class="sbox"><div class="snum c-gold">${totalWeeks}</div><div class="slbl">Total Minggu</div></div>
+        <div class="sbox"><div class="snum c-red">${filtered.length}</div><div class="slbl">Player Bermasalah</div></div>
+        <div class="sbox"><div class="snum c-red">${stats.filter(s=>s.streak>=2).length}</div><div class="slbl">🔥 Streak ≥2</div></div>
+      </div>
+    </div>
+    ${filtered.length === 0 ? `
+      <div class="card"><div class="empty"><div class="empty-ico">🎉</div>
+        <div class="empty-txt">Tidak ada player yang gagal ≥${minFailFilter}x.</div>
+      </div></div>` : `
+    <div class="card">
+      <div class="card-hd"><div class="card-title">📋 Daftar Player (${filtered.length})</div></div>
+      <div class="mlist">
+        ${filtered.map((s, i) => {
+          const pct = totalWeeks > 0 ? Math.round(s.failCount / totalWeeks * 100) : 0;
+          const streakBadge = s.streak >= 2
+            ? `<span style="background:rgba(231,76,60,.18);color:var(--red2);font-size:11px;padding:2px 8px;border-radius:10px;font-weight:600;white-space:nowrap">🔥 ${s.streak}x streak</span>`
+            : '';
+          return `
+            <div class="mrow" style="flex-direction:column;align-items:flex-start;gap:6px;padding:12px">
+              <div style="display:flex;width:100%;align-items:center;gap:8px;flex-wrap:wrap">
+                <span class="mnum">${i+1}</span>
+                <span class="mname" style="flex:1">${esc(s.member.name)}</span>
+                <span class="rbadge r-${s.member.rank.toLowerCase()}">${s.member.rank}</span>
+                <span style="background:rgba(231,76,60,.18);color:var(--red2);font-weight:700;font-size:14px;padding:3px 10px;border-radius:10px;min-width:44px;text-align:center">${s.failCount}x</span>
+                ${streakBadge}
+              </div>
+              <div style="padding-left:32px;width:100%">
+                <div style="background:var(--bg2);border-radius:4px;height:5px;overflow:hidden;margin-bottom:6px">
+                  <div style="height:100%;width:${pct}%;background:var(--red2);border-radius:4px"></div>
+                </div>
+                <div style="font-size:11px;color:var(--muted)">
+                  Fail di: ${s.failWeeks.map(wk => `<span style="background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:1px 7px;font-size:10px;margin:1px 2px;display:inline-block">${wk}</span>`).join('')}
+                </div>
+              </div>
+            </div>`;
+        }).join('')}
+      </div>
+    </div>`}
+  `;
+}
+window.setMinFail = function(n) { minFailFilter = n; renderAlwaysFail(); };
 
 </script>
 </body>
